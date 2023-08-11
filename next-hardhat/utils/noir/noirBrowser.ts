@@ -45,6 +45,7 @@ export class NoirBrowser {
     );
 
     this.acirComposer = await this.api.acirNewAcirComposer(subgroupSize);
+    console.log('acir composer', this.acirComposer)
   }
 
   async generateWitness(input: any): Promise<Uint8Array> {
@@ -57,6 +58,7 @@ export class NoirBrowser {
     });
 
     const witnessBuff = compressWitness(witnessMap);
+    console.log('witness buff', witnessBuff)
     return witnessBuff;
   }
 
@@ -67,12 +69,18 @@ export class NoirBrowser {
       decompressSync(witness),
       false,
     );
+    console.log('proof', proof)
     return proof;
   }
 
   async verifyProof(proof: Uint8Array) {
-    await this.api.acirInitProvingKey(this.acirComposer, this.acirBufferUncompressed);
-    const verified = await this.api.acirVerifyProof(this.acirComposer, proof, false);
+    let verified = false;
+    try {
+      await this.api.acirInitProvingKey(this.acirComposer, this.acirBufferUncompressed);
+      verified = await this.api.acirVerifyProof(this.acirComposer, proof, false);
+    } catch (e) {
+      console.log('verification error', e)
+    }
     return verified;
   }
 

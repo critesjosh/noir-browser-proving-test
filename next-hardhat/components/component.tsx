@@ -8,7 +8,7 @@ import { NoirBrowser } from '../utils/noir/noirBrowser';
 import { ThreeDots } from 'react-loader-spinner';
 
 function Component() {
-  const [input, setInput] = useState({ x: 0, y: 0});
+  const [input, setInput] = useState({ x: 0, y: 1 });
   const [pending, setPending] = useState(false);
   const [proof, setProof] = useState(Uint8Array.from([]));
   const [verification, setVerification] = useState(false);
@@ -41,6 +41,7 @@ function Component() {
     if (proof) {
       try {
         const verification = await noir.verifyProof(proof);
+        console.log('verification result', verification);
         setVerification(verification);
         toast.success('Proof verified!');
 
@@ -48,14 +49,14 @@ function Component() {
         const publicInputs = proof.slice(0, 32);
         const slicedProof = proof.slice(32);
 
-        const ver = await ethers.contract.verify(slicedProof, [publicInputs]);
-        if (ver) {
-          toast.success('Proof verified on-chain!');
-          setVerification(true);
-        } else {
-          toast.error('Proof failed on-chain verification');
-          setVerification(false);
-        }
+        // const ver = await ethers.contract.verify(slicedProof, [publicInputs]);
+        // if (ver) {
+        //   toast.success('Proof verified on-chain!');
+        //   setVerification(true);
+        // } else {
+        //   toast.error('Proof failed on-chain verification');
+        //   setVerification(false);
+        // }
       } catch (err) {
         toast.error('Error verifying your proof');
       } finally {
